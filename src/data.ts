@@ -13,6 +13,7 @@ export type Pokemon = {
   form?: string;
   otherForms?: Array<string>;
   formeOrder?: Array<string>;
+  baseSpecies?: string;
   [key: string]: unknown;
 };
 

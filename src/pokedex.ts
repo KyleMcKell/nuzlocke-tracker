@@ -1,6 +1,6 @@
 import type { Pokemon } from "./data";
 
-export const Pokedex: Record<string, Pokemon> = {
+export const pokedex: Record<string, Pokemon> = {
   bulbasaur: {
     num: 1,
     name: "Bulbasaur",
