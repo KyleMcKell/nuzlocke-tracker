@@ -1,4 +1,5 @@
 import Image from "next/image";
+import type { Pokemon } from "~/data";
 import { pokedex } from "~/pokedex";
 
 function formatSpriteSrc(pokemonName: string, hasAltForms: boolean) {
@@ -12,18 +13,26 @@ function formatSpriteSrc(pokemonName: string, hasAltForms: boolean) {
   return cleanedString.toLowerCase();
 }
 
-function generateSprite(
-  pokemonName: string,
-  variant: "gen5" | "pixel",
-  baseSpecies: string | undefined,
-) {
-  if (variant === "pixel") {
-    const spriteSrc = `https://raw.githubusercontent.com/May8th1995/sprites/master/${pokemonName}.png`;
-    return spriteSrc;
-  }
+function generateSprite(pokemon: Pokemon, variant?: "gen5" | "pixel") {
+  const pixelSrc = `https://raw.githubusercontent.com/May8th1995/sprites/master/${pokemon.name}.png`;
 
-  const src = `https://play.pokemonshowdown.com/sprites/gen5/${formatSpriteSrc(pokemonName, Boolean(baseSpecies))}.png`;
-  return src;
+  const isAlternativeForm = !!pokemon.baseSpecies;
+  const formattedPokemonName = formatSpriteSrc(pokemon.name, isAlternativeForm);
+  const gen5Src = `https://play.pokemonshowdown.com/sprites/gen5/${formattedPokemonName}.png`;
+
+  const src = variant === "gen5" ? gen5Src : pixelSrc;
+
+  return { pixelSrc, gen5Src, src };
+}
+
+export function generatePixelSprite(pokemon: Pokemon) {
+  const { pixelSrc } = generateSprite(pokemon);
+  return pixelSrc;
+}
+
+export function generateGen5Sprite(pokemon: Pokemon) {
+  const { gen5Src } = generateSprite(pokemon);
+  return gen5Src;
 }
 
 export default function Page({ params }: { params: { pokemonName: string } }) {
@@ -31,7 +40,7 @@ export default function Page({ params }: { params: { pokemonName: string } }) {
 
   if (!pokemon) return "Pokemon not found";
 
-  const src = generateSprite(pokemon.name, "gen5", pokemon.baseSpecies);
+  const { src } = generateSprite(pokemon, "pixel");
 
   return (
     <div>
